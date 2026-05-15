@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>单泡大师 · 主播培训资料</title>
+<style>
+  :root {
+    --tea-brown: #6B4226;
+    --tea-gold: #C9A84C;
+    --tea-light: #F9F4EC;
+    --tea-green: #5A7A3A;
+    --tea-gray: #6B7280;
+    --sidebar-w: 260px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--tea-light); color: #333; display: flex; min-height: 100vh; }
+
+  /* 侧边栏 */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--tea-brown);
+    color: #fff;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-logo {
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .sidebar-logo h1 { font-size: 1.2rem; letter-spacing: 2px; color: var(--tea-gold); }
+  .sidebar-logo p { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .nav-label { padding: 16px 20px 8px; font-size: 0.7rem; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.1); }
+  .nav-item.active { background: rgba(201,168,76,0.2); border-left-color: var(--tea-gold); color: var(--tea-gold); }
+  .nav-item .emoji { font-size: 1.1rem; }
+
+  /* 内容区 */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 顶部 */
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title { font-size: 1rem; font-weight: 600; color: var(--tea-brown); }
+  .topbar-badge {
+    background: var(--tea-gold);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* 内容 */
+  .content { padding: 32px; max-width: 900px; }
+
+  /* 英雄区 */
+  .hero {
+    background: linear-gradient(135deg, var(--tea-brown) 0%, #8B5E3C 100%);
+    border-radius: 16px;
+    padding: 40px;
+    color: #fff;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "🍵";
+    position: absolute;
+    right: 40px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem;
+    opacity: 0.2;
+  }
+  .hero h2 { font-size: 1.8rem; margin-bottom: 8px; }
+  .hero p { color: rgba(255,255,255,0.75); font-size: 0.9rem; line-height: 1.7; }
+  .hero-tags { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .hero-tag {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.78rem;
+  }
+
+  /* 品类导航卡 */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .cat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    text-align: center;
+  }
+  .cat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+  .cat-card.active { border-color: var(--tea-gold); box-shadow: 0 4px 12px rgba(201,168,76,0.2); }
+  .cat-card .icon { font-size: 2rem; margin-bottom: 8px; }
+  .cat-card h3 { font-size: 0.9rem; font-weight: 600; color: var(--tea-brown); }
+  .cat-card p { font-size: 0.72rem; color: var(--tea-gray); margin-top: 4px; }
+
+  /* 内容区块 */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--tea-brown);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--tea-gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* 卡片 */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--tea-brown);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    width: 4px; height: 16px;
+    background: var(--tea-gold);
+    border-radius: 2px;
+    display: inline-block;
+  }
+  p, li { line-height: 1.8; font-size: 0.88rem; color: #444; }
+  ul, ol { padding-left: 20px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--tea-brown); }
+
+  /* 表格 */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  thead tr { background: var(--tea-brown); color: #fff; }
+  thead th { padding: 10px 14px; text-align: left; font-weight: 500; }
+  tbody tr:nth-child(even) { background: #FDFAF4; }
+  tbody tr:hover { background: #F5EDD8; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid #EDE8DF; vertical-align: top; }
+  tbody td:first-child { font-weight: 600; color: var(--tea-brown); white-space: nowrap; }
+
+  /* 工艺流程 */
+  .process-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .process-step {
+    background: var(--tea-light);
+    border: 1px solid #DDD6C4;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    color: var(--tea-brown);
+    font-weight: 500;
+  }
+  .process-arrow { color: var(--tea-gold); font-size: 1.1rem; }
+
+  /* 词汇表标签 */
+  .vocab-tag {
+    display: inline-block;
+    background: rgba(107, 66, 38, 0.08);
+    color: var(--tea-brown);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* 子品类切换 */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .sub-tab {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid #DDD6C4;
+    cursor: pointer;
+    font-size: 0.85rem;
+    background: #fff;
+    color: var(--tea-gray);
+    transition: all 0.2s;
+  }
+  .sub-tab:hover { background: var(--tea-light); color: var(--tea-brown); }
+  .sub-tab.active { background: var(--tea-brown); color: #fff; border-color: var(--tea-brown); }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
+    .main { margin-left: 0; }
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>单泡大师</h1>
+    <p>主播培训资料手册</p>
+  </div>
+  <div class="nav-label">学习模块</div>
+  <div class="nav-item active" onclick="showSection('home', this)">
+    <span class="emoji">🏠</span> 首页总览
+  </div>
+  <div class="nav-label">六大品类</div>
+  <div class="nav-item" onclick="showSection('puerh', this)">
+    <span class="emoji">🍃</span> 普洱茶
+  </div>
+  <div class="nav-item" onclick="showSection('liubao', this)">
+    <span class="emoji">🫖</span> 六堡茶
+  </div>
+  <div class="nav-item" onclick="showSection('chenpi', this)">
+    <span class="emoji">🍊</span> 陈皮
+  </div>
+  <div class="nav-item" onclick="showSection('baicha', this)">
+    <span class="emoji">🌿</span> 白茶
+  </div>
+  <div class="nav-item" onclick="showSection('hongcha', this)">
+    <span class="emoji">🌹</span> 红茶
+  </div>
+  <div class="nav-item" onclick="showSection('wulong', this)">
+    <span class="emoji">🌸</span> 乌龙茶
+  </div>
+</aside>
+
+<!-- 主内容区 -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">首页总览</div>
+    <div class="topbar-badge">主播培训专用</div>
+  </div>
+  <div class="content">
+
+    <!-- 首页 -->
+    <div class="section active" id="section-home">
+      <div class="hero">
+        <h2>主播茶类速学手册</h2>
+        <p>本手册涵盖单泡大师六大销售品类，每个品类包含基础知识速览与高频词汇表。<br>建议主播按品类逐一学习，熟悉后在直播间灵活运用。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">📖 速读版 · 每类约10分钟</span>
+          <span class="hero-tag">🗂️ 基础知识 + 词汇表</span>
+          <span class="hero-tag">🎯 直播话术基础</span>
+        </div>
+      </div>
+      <div class="category-grid">
+        <div class="cat-card" onclick="showSection('puerh', document.querySelector('.nav-item:nth-child(5)'))">
+          <div class="icon">🍃</div>
+          <h3>普洱茶</h3>
+          <p>生茶 · 熟茶 · 山头茶</p>
+        </div>
+        <div class="cat-card" onclick="showSection('liubao', document.querySelector('.nav-item:nth-child(6)'))">
+          <div class="icon">🫖</div>
+          <h3>六堡茶</h3>
+          <p>红浓陈醇 · 槟榔香</p>
+        </div>
+        <div class="cat-card" onclick="showSection('chenpi', document.querySelector('.nav-item:nth-child(7)'))">
+          <div class="icon">🍊</div>
+          <h3>陈皮</h3>
+          <p>新会陈皮 · 小青柑</p>
+        </div>
+        <div class="cat-card" onclick="showSection('baicha', document.querySelector('.nav-item:nth-child(8)'))">
+          <div class="icon">🌿</div>
+          <h3>白茶</h3>
+          <p>福鼎白茶 · 越陈越香</p>
+        </div>
+        <div class="cat-card" onclick="showSection('hongcha', document.querySelector('.nav-item:nth-child(9)'))">
+          <div class="icon">🌹</div>
+          <h3>红茶</h3>
+          <p>金骏眉 · 滇红 · 祁红</p>
+        </div>
+        <div class="cat-card" onclick="showSection('wulong', document.querySelector('.nav-item:nth-child(10)'))">
+          <div class="icon">🌸</div>
+          <h3>乌龙茶</h3>
+          <p>单丛 · 岩茶 · 铁观音</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">如何使用本手册</div>
+        <ul>
+          <li>左侧菜单点击品类，进入对应学习页面</li>
+          <li><strong>基础知识</strong>：了解该品类的简介、工艺、口感和名品</li>
+          <li><strong>高频词汇</strong>：重点记忆，直播中直接使用</li>
+          <li>建议先熟悉自己主推的品类，再逐步学习其他品类</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 普洱茶 -->
+    <div class="section" id="section-puerh">
+      <div class="section-title">🍃 普洱茶</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>普洱茶以云南大叶种晒青毛茶为原料，分为<strong>生茶（生普）</strong>和<strong>熟茶（熟普）</strong>两大类。产地集中在<strong>西双版纳、临沧、普洱</strong>三大茶区，最大特点是可长期存放，越陈越香，具有独特的地域香和转化价值。</p>
+        <p style="margin-top:10px">常见形态：饼茶（357g）、砖茶、沱茶、散茶</p>
+      </div>
+      <div class="card">
+        <div class="card-title">工艺流程</div>
+        <p><strong>生茶工艺：</strong></p>
+        <div class="process-flow">
+          <span class="process-step">鲜叶采摘</span><span class="process-arrow">→</span>
+          <span class="process-step">摊晾</span><span class="process-arrow">→</span>
+          <span class="process-step">杀青</span><span class="process-arrow">→</span>
+          <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+          <span class="process-step">晒干（晒青毛茶）</span><span class="process-arrow">→</span>
+          <span class="process-step">蒸压成型</span><span class="process-arrow">→</span>
+          <span class="process-step">干燥包装</span>
+        </div>
+        <p style="margin-top:12px"><strong>熟茶工艺：</strong></p>
+        <div class="process-flow">
+          <span class="process-step">晒青毛茶</span><span class="process-arrow">→</span>
+          <span class="process-step">渥堆发酵（45-60天）</span><span class="process-arrow">→</span>
+          <span class="process-step">翻堆</span><span class="process-arrow">→</span>
+          <span class="process-step">摊晾筛分</span><span class="process-arrow">→</span>
+          <span class="process-step">蒸压成型</span><span class="process-arrow">→</span>
+          <span class="process-step">干燥包装</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">品饮口感方向</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类型</th><th>香气</th><th>滋味</th><th>体感</th></tr></thead>
+            <tbody>
+              <tr><td>新生茶</td><td>花香、蜜香、清香</td><td>苦涩明显，回甘生津</td><td>刺激性强，茶气足</td></tr>
+              <tr><td>老生茶</td><td>陈香、药香、木香</td><td>苦涩退化，醇厚甘甜</td><td>温和，气韵沉稳</td></tr>
+              <tr><td>熟茶</td><td>陈香、糯香、木香</td><td>醇厚顺滑，甜润少苦涩</td><td>暖胃，养胃，温和</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">品类名品</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>名品</th><th>产地</th><th>特点</th></tr></thead>
+            <tbody>
+              <tr><td>老班章</td><td>西双版纳勐海县</td><td>茶王级别，苦重回甘强，霸气</td></tr>
+              <tr><td>冰岛</td><td>临沧双江县</td><td>甜润清雅，冰糖香，回甘持久</td></tr>
+              <tr><td>易武</td><td>西双版纳易武乡</td><td>柔和蜜香，汤质细腻，易入口</td></tr>
+              <tr><td>景迈山</td><td>普洱市澜沧县</td><td>兰花蜜香突出，山野气韵</td></tr>
+              <tr><td>大益7572（熟）</td><td>勐海茶厂</td><td>经典标杆熟饼，市场认知度高</td></tr>
+              <tr><td>宫廷普洱（熟）</td><td>各产区</td><td>芽头细嫩，口感细滑，甜香</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">高频词汇表</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+            <tbody>
+              <tr><td>生茶</td><td>未经渥堆发酵的普洱茶，保留茶叶活性，可长期存放自然转化</td></tr>
+              <tr><td>熟茶</td><td>经渥堆发酵工艺加工，口感醇厚顺滑，适合即饮或短期存放</td></tr>
+              <tr><td>渥堆</td><td>熟茶核心工序，将毛茶堆成堆状、洒水、覆盖，利用微生物发酵转化，需45-60天</td></tr>
+              <tr><td>古树茶</td><td>树龄100年以上茶树所产茶叶，根系深，内含物质丰富，价值较高</td></tr>
+              <tr><td>老树茶</td><td>树龄60-100年的茶树，介于古树与台地之间</td></tr>
+              <tr><td>大树茶</td><td>乔木型茶树，树形高大，主干明显，鲜叶品质优于台地</td></tr>
+              <tr><td>小树茶</td><td>树龄较短的茶树，多为人工种植的台地茶</td></tr>
+              <tr><td>台地茶</td><td>人工密植、矮化修剪的茶园茶，产量高，价格相对实惠</td></tr>
+              <tr><td>野生茶</td><td>无人为干预、自然生长的野放茶树，滋味浓烈，部分可能含微毒</td></tr>
+              <tr><td>山头</td><td>普洱茶特定产地山头，不同山头气候土壤各异，茶叶风格差异明显</td></tr>
+              <tr><td>名山名寨</td><td>知名产茶山头和村寨，如老班章、冰岛、易武、景迈等</td></tr>
+              <tr><td>寨子茶</td><td>以某个村寨命名的茶叶，如老班章寨、冰岛老寨</td></tr>
+              <tr><td>产区</td><td>茶叶生产区域，如西双版纳、临沧、普洱三大产区</td></tr>
+              <tr><td>干仓</td><td>干燥、通风、湿度适中（≤65%）的存储环境，自然陈化，茶品干净</td></tr>
+              <tr><td>湿仓</td><td>高温高湿环境存放，人为加速陈化，易有仓味，品质参差</td></tr>
+              <tr><td>港仓</td><td>早期在香港仓储的普洱，多为湿仓存放</td></tr>
+              <tr><td>昆明仓</td><td>在昆明干仓存放，转化慢但品质稳定</td></tr>
+              <tr><td>陈化</td><td>普洱茶在时间作用下，内含物质缓慢氧化转化的过程</td></tr>
+              <tr><td>后发酵</td><td>普洱茶在微生物参与下持续发酵转化的特性，越陈越香</td></tr>
+              <tr><td>越陈越香</td><td>普洱茶核心价值，在正确存储下，年份越长香气口感越醇厚</td></tr>
+              <tr><td>回甘</td><td>茶汤入口苦涩后，口腔产生持久甜润感，是好茶重要指标</td></tr>
+              <tr><td>生津</td><td>饮茶后口腔分泌唾液，带来清爽滋润感</td></tr>
+              <tr><td>喉韵</td><td>茶汤咽下后喉咙产生的甘润、滋润感，深沉持久为佳</td></tr>
+              <tr><td>茶气</td><td>饮茶后身体的整体感受，如发热、打嗝、通气、身体微汗等</td></tr>
+              <tr><td>收敛性</td><td>茶汤苦涩感在口腔中停留后快速化开、回甘的程度</td></tr>
+              <tr><td>汤感</td><td>茶汤在口腔中的质感表现，包括厚薄、滑涩、细腻度</td></tr>
+              <tr><td>水厚/水薄</td><td>水厚=内含物质丰富、汤感饱满；水薄=寡淡单薄</td></tr>
+              <tr><td>层次感</td><td>茶汤香气和滋味在口腔中呈现先后的变化，层次丰富为佳</td></tr>
+              <tr><td>苦涩</td><td>茶汤的基本口感，苦由咖啡因引起，涩由茶多酚引起</td></tr>
+              <tr><td>苦底</td><td>茶汤入口的苦味基调，好的苦底能迅速化开带来回甘</td></tr>
+              <tr><td>仓味</td><td>存储不当产生的异味，通常指湿仓茶的沉闷气息</td></tr>
+              <tr><td>拼配</td><td>将不同产区、树龄、等级的茶叶按配方比例混合，稳定风格、控制成本</td></tr>
+              <tr><td>纯料</td><td>单一山头、单一批次茶叶，不经拼配，能体现山头特色</td></tr>
+              <tr><td>春茶</td><td>每年立春至立夏期间采摘，内含物质最丰富，品质最优</td></tr>
+              <tr><td>头春</td><td>每年春季第一批采摘，芽头最肥壮，珍贵度高</td></tr>
+              <tr><td>秋茶</td><td>立秋后采摘，香气较好，滋味略薄</td></tr>
+              <tr><td>古法制茶</td><td>遵循传统手工工艺制作，产量少，品质稳定</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 六堡茶 -->
+    <div class="section" id="section-liubao">
+      <div class="section-title">🫖 六堡茶</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>六堡茶是广西梧州苍梧县六堡镇原产的<strong>黑茶</strong>，以"<strong>红、浓、陈、醇</strong>"四绝著称，历史上大量销往东南亚，深受华侨喜爱。</p>
+        <p style="margin-top:8px">常见形态：散茶、竹篓装茶、茶砖、饼茶</p>
+      </div>
+      <div class="card">
+        <div class="card-title">工艺流程（区分传统工艺与现代工艺）</div>
+        <p>六堡茶工艺分为"传统工艺"与"现代工艺"两大体系，<strong>最大区别在于是否经过"冷水渥堆"发酵</strong>。</p>
+        <p style="margin-top:10px; color: var(--tea-gold); font-weight: 600;">传统工艺六堡茶（2014年列入国家级非遗）</p>
+        <p style="color: var(--tea-gray); font-size: 0.8rem;">核心特点：不经过冷水渥堆，仅靠堆闷自然发酵</p>
+        <div class="process-flow">
+          <span class="process-step">鲜叶采摘</span><span class="process-arrow">→</span>
+          <span class="process-step">杀青</span><span class="process-arrow">→</span>
+          <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+          <span class="process-step">堆闷发酵</span><span class="process-arrow">→</span>
+          <span class="process-step">复揉</span><span class="process-arrow">→</span>
+          <span class="process-step">烘干</span><span class="process-arrow">→</span>
+          <span class="process-step">挑拣</span><span class="process-arrow">→</span>
+          <span class="process-step">存放陈化</span>
+        </div>
+        <p style="margin-top:10px"><strong>口感风格：</strong>茶性较强，汤感较烈，香浓味足，回甘迅猛</p>
+        <p style="margin-top:10px; color: var(--tea-gold); font-weight: 600;">现代工艺六堡茶（1958年梧州茶厂研发）</p>
+        <p style="color: var(--tea-gray); font-size: 0.8rem;">核心特点：经过冷水渥堆发酵+汽蒸焗堆，双重发酵</p>
+        <p><strong>初制：</strong>杀青 → 初揉 → 堆闷 → 复揉 → 干燥</p>
+        <p><strong>精制：</strong>筛分 → 拣剔 → 拼配 → 冷水渥堆 → 汽蒸焗堆 → 包装 → 陈化</p>
+        <p style="margin-top:10px"><strong>口感风格：</strong>茶性更柔，汤色红浓，滋味醇厚绵柔</p>
+      </div>
+      <div class="card">
+        <div class="card-title">品饮口感方向</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类型</th><th>香气</th><th>滋味</th><th>体感</th></tr></thead>
+            <tbody>
+              <tr><td>新茶</td><td>青气、草木香</td><td>滋味较涩，汤色偏黄红</td><td>刺激感略强</td></tr>
+              <tr><td>中期茶（5-10年）</td><td>陈香、木香渐现</td><td>醇和甘润，涩感退化</td><td>顺滑，暖胃</td></tr>
+              <tr><td>老茶（10年以上）</td><td>槟榔香、药香、陈樟香</td><td>醇厚甜润，顺滑无苦涩</td><td>温暖，通气活络</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">高频词汇表</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+            <tbody>
+              <tr><td>红浓陈醇</td><td>六堡茶四绝——汤色红亮、滋味浓郁、陈香突出、口感醇和</td></tr>
+              <tr><td>后发酵</td><td>六堡茶核心特性，在微生物作用下持续发酵转化，是黑茶标志性工艺</td></tr>
+              <tr><td>渥堆</td><td>现代工艺六堡茶的关键工序，通过洒水堆积促进微生物发酵转化</td></tr>
+              <tr><td>堆闷</td><td>传统工艺六堡茶的发酵方式，利用揉捻后茶叶自身茶汁进行自然堆放发酵</td></tr>
+              <tr><td>冷水渥堆</td><td>现代六堡茶核心工序，与传统堆闷的最大区别，需多次翻堆，发酵更彻底</td></tr>
+              <tr><td>传统工艺</td><td>不经冷水渥堆的古法工艺，2014年列入国家级非物质文化遗产代表性项目</td></tr>
+              <tr><td>现代工艺</td><td>经过冷水渥堆发酵的工艺，1958年由梧州茶厂研发成功</td></tr>
+              <tr><td>农家茶</td><td>六堡镇茶农按传统工艺少量制作，保留原味风格</td></tr>
+              <tr><td>厂茶</td><td>正规茶厂按现代工艺标准化生产，品质稳定</td></tr>
+              <tr><td>窖藏</td><td>将六堡茶存放于专用窖仓，利用稳定温湿度环境促进自然陈化</td></tr>
+              <tr><td>木仓</td><td>以木质材料构建的仓储空间，有助于陈化出独特木香</td></tr>
+              <tr><td>竹篓装</td><td>传统六堡茶包装，大竹篓盛装，透气性好有助于自然陈化</td></tr>
+              <tr><td>年份茶</td><td>标注具体存放年份的六堡茶，年份是定价的重要因素</td></tr>
+              <tr><td>中期茶</td><td>存放5-10年的六堡茶，滋味转化醇和，适饮性好</td></tr>
+              <tr><td>老茶</td><td>存放10年以上的六堡茶，槟榔香等特征明显，价值较高</td></tr>
+              <tr><td>槟榔香</td><td>六堡茶标志性香气，优质老茶特有，类似槟榔果的清甜香气</td></tr>
+              <tr><td>陈香</td><td>六堡茶长期存放后产生的醇厚香气，是岁月转化的标志</td></tr>
+              <tr><td>药香</td><td>老六堡茶常见的香气，类似中药材的温和气息</td></tr>
+              <tr><td>木香</td><td>在木仓中陈化产生的独特香气，带有木质温暖感</td></tr>
+              <tr><td>枣香</td><td>部分六堡茶陈化后产生的类似红枣的甜香</td></tr>
+              <tr><td>箩竹香</td><td>六堡茶存放于竹篓中吸附的淡淡竹子清香</td></tr>
+              <tr><td>金花</td><td>学名"冠突散囊菌"，金黄色颗粒状有益菌，是高品质六堡茶的标志</td></tr>
+              <tr><td>发花</td><td>在特定温湿度条件下培养金花菌的过程</td></tr>
+              <tr><td>金花六堡</td><td>含有金花的六堡茶品种，金花菌有助于提升品质</td></tr>
+              <tr><td>苍梧六堡</td><td>广西苍梧县六堡镇原产地，地理标志产品保护区</td></tr>
+              <tr><td>梧州六堡</td><td>以梧州为核心的六堡茶产区，现代化程度高</td></tr>
+              <tr><td>侨销茶</td><td>历史上大量出口东南亚供华侨饮用的六堡茶，是最早的"出口茶"</td></tr>
+              <tr><td>祛湿</td><td>六堡茶传统功效，祛除体内湿气，适宜南方潮湿地区人群</td></tr>
+              <tr><td>养胃</td><td>六堡茶发酵后茶性温和，对胃刺激小，适合日常饮用</td></tr>
+              <tr><td>耐泡度</td><td>优质六堡茶可冲泡10-15次以上仍有余味</td></tr>
+              <tr><td>红亮</td><td>优质六堡茶茶汤颜色，红浓透亮为佳</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 陈皮 -->
+    <div class="section" id="section-chenpi">
+      <div class="section-title">🍊 陈皮（新会陈皮）</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>陈皮以<strong>新会柑</strong>（茶枝柑）果皮经干燥陈化制成，是道地药材和食材。"<strong>一两陈皮一两金，百年陈皮胜黄金</strong>"道出其越陈越贵的特性。</p>
+        <p style="margin-top:8px">主要茶饮形态：<strong>小青柑</strong>（小青柑+普洱熟茶）、大红柑（大红柑+普洱茶）</p>
+      </div>
+      <div class="card">
+        <div class="card-title">工艺流程</div>
+        <p><strong>陈皮制作：</strong></p>
+        <div class="process-flow">
+          <span class="process-step">采摘新会柑</span><span class="process-arrow">→</span>
+          <span class="process-step">开皮（三刀法）</span><span class="process-arrow">→</span>
+          <span class="process-step">翻皮</span><span class="process-arrow">→</span>
+          <span class="process-step">晒干/烘干</span><span class="process-arrow">→</span>
+          <span class="process-step">陈化（3年以上）</span>
+        </div>
+        <p style="margin-top:12px"><strong>小青柑制作：</strong></p>
+        <div class="process-flow">
+          <span class="process-step">采摘小青柑</span><span class="process-arrow">→</span>
+          <span class="process-step">开盖取肉</span><span class="process-arrow">→</span>
+          <span class="process-step">填入普洱熟茶</span><span class="process-arrow">→</span>
+          <span class="process-step">低温烘焙/日晒</span><span class="process-arrow">→</span>
+          <span class="process-step">包装</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">品饮口感方向</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类型</th><th>香气</th><th>滋味</th><th>体感</th></tr></thead>
+            <tbody>
+              <tr><td>新皮（1-3年）</td><td>清新果香，油室香气浓</td><td>略苦涩，果味清晰</td><td>清爽、理气</td></tr>
+              <tr><td>中期皮（5-10年）</td><td>醇香、蜜香渐现</td><td>苦涩退化，甜润顺滑</td><td>暖和、舒畅</td></tr>
+              <tr><td>老皮（20年+）</td><td>药香、陈香浓郁</td><td>醇厚甘甜，入口顺滑</td><td>温补、养胃</td></tr>
+              <tr><td>小青柑</td><td>青皮香+茶香融合</td><td>果味清新，茶味醇和</td><td>清爽提神</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">高频词汇表</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+            <tbody>
+              <tr><td>新会陈皮</td><td>广东江门新会区地理标志产品，以茶枝柑果皮经三年以上陈化制成</td></tr>
+              <tr><td>茶枝柑</td><td>新会陈皮的唯一原料品种，皮薄油胞大，香气物质丰富</td></tr>
+              <tr><td>三年陈皮</td><td>鲜皮经满3年自然陈化才可称"陈皮"，未满3年只能叫"柑皮"或"果皮"</td></tr>
+              <tr><td>一两陈皮一两金</td><td>形容年份陈皮的珍贵，年份越老价值越高</td></tr>
+              <tr><td>越陈越香</td><td>陈皮存放年份越长，内含物质转化越充分，香气越醇厚</td></tr>
+              <tr><td>药食同源</td><td>陈皮既是食材也是中药材，可入药可泡茶</td></tr>
+              <tr><td>核心产区</td><td>新会梅江、天马、茶坑、东甲、西甲等一线产地，品质最优</td></tr>
+              <tr><td>一线/二线/三线产区</td><td>市场按历史声誉和品质对产地的分级，一线品质最高</td></tr>
+              <tr><td>圈枝柑</td><td>茶枝柑直接扦插繁殖，无嫁接，须根系统，产量低但品质纯正</td></tr>
+              <tr><td>驳枝柑</td><td>茶枝柑嫁接在柠檬砧木上，产量高抗病强，市场主流，性价比高</td></tr>
+              <tr><td>东甲陈皮</td><td>新会东甲村产，陈皮中的上品，果香浓郁</td></tr>
+              <tr><td>梅江陈皮</td><td>新会梅江村产，传统核心产区，品质公认最优</td></tr>
+              <tr><td>开皮</td><td>将柑果果肉与果皮分离的工序，讲究"正三刀法"——果蒂朝上，从果顶向蒂部纵划三刀</td></tr>
+              <tr><td>反皮</td><td>开皮后将柑皮内白色内囊向外翻出，以便均匀晾晒</td></tr>
+              <tr><td>晒制</td><td>利用阳光自然晒干，传统工艺，阳光能激发陈皮香气</td></tr>
+              <tr><td>烘干</td><td>用烘干设备快速干燥，效率高但风味可能不如日晒</td></tr>
+              <tr><td>日晒皮</td><td>坚持阳光晒制的陈皮，香气更自然醇正</td></tr>
+              <tr><td>油室（油胞）</td><td>陈皮表皮的点状凸起，是挥发油储存库，油室越密越饱满品质越好</td></tr>
+              <tr><td>猪鬃纹</td><td>陈皮内囊上类似猪鬃毛囊的纹理，随年份增加逐渐脱落，是自然陈化的标志</td></tr>
+              <tr><td>台风疤</td><td>新会柑果被台风刮伤后愈合的疤痕，是道地新会柑的身份印记</td></tr>
+              <tr><td>青皮</td><td>未成熟果（约立秋至寒露采摘）皮，外皮青绿，药用为主，挥发油含量高</td></tr>
+              <tr><td>二红皮</td><td>半成熟果（约寒露至小雪采摘）皮，外皮黄绿相交，用途广泛</td></tr>
+              <tr><td>大红皮</td><td>完全成熟果（约小雪至小寒采摘）皮，外皮橙红，糖分高，最适合泡茶</td></tr>
+              <tr><td>陈皮丝/陈皮片</td><td>按切割形状分类，丝状易出味，片状利于观察品相</td></tr>
+              <tr><td>干仓</td><td>在干燥通风自然环境中陈化，转化慢但色泽香气纯正</td></tr>
+              <tr><td>湿仓</td><td>人为加湿加温加速陈化，皮色黑快但易有异味，不推荐</td></tr>
+              <tr><td>烧皮</td><td>新皮晒制时堆放过厚导致内部发热碳化，皮色变黑，品质受损</td></tr>
+              <tr><td>霉变</td><td>仓储受潮导致发霉，白霉可补救，绿霉（含黄曲霉素）不可食用</td></tr>
+              <tr><td>虫蛀</td><td>陈化中被谷蠹等虫蛀食，轻微虫蛀可刷净晒干后食用</td></tr>
+              <tr><td>返晒</td><td>定期将陈皮取出晒太阳，防虫防潮保持干燥，传统仓储必要工序</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 白茶 -->
+    <div class="section" id="section-baicha">
+      <div class="section-title">🌿 白茶（福鼎白茶）</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>白茶是六大茶类中工艺最简单的茶，<strong>不炒不揉</strong>，只经萎凋和干燥。福鼎白茶以"<strong>一年茶，三年药，七年宝</strong>"闻名，可长期存放陈化。</p>
+        <p style="margin-top:8px">常见等级：白毫银针（全芽）→ 白牡丹（一芽一二叶）→ 寿眉/贡眉（叶为主）</p>
+      </div>
+      <div class="card">
+        <div class="card-title">工艺流程</div>
+        <div class="process-flow">
+          <span class="process-step">鲜叶采摘</span><span class="process-arrow">→</span>
+          <span class="process-step">萎凋（36-72小时）</span><span class="process-arrow">→</span>
+          <span class="process-step">干燥（文火慢焙/日晒）</span><span class="process-arrow">→</span>
+          <span class="process-step">拣剔</span><span class="process-arrow">→</span>
+          <span class="process-step">包装</span>
+        </div>
+        <p style="margin-top:10px; color: var(--tea-gray)">核心：萎凋时间越长，转化越充分，白茶风格越形成</p>
+      </div>
+      <div class="card">
+        <div class="card-title">品饮口感方向</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类型</th><th>香气</th><th>滋味</th><th>体感</th></tr></thead>
+            <tbody>
+              <tr><td>白毫银针（新）</td><td>毫香、清香、花香</td><td>鲜爽清甜，毫味明显</td><td>清凉、降火</td></tr>
+              <tr><td>白牡丹（新）</td><td>花香、毫香</td><td>清甜鲜爽，滋味丰富</td><td>清凉舒爽</td></tr>
+              <tr><td>老白茶（3年+）</td><td>药香、枣香、荷叶香</td><td>醇厚甘甜，汤色橙红</td><td>温润养胃</td></tr>
+              <tr><td>老白茶饼（5年+）</td><td>枣香浓郁、陈香</td><td>甜润顺滑，岁月感强</td><td>温暖，养气</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">高频词汇表</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+            <tbody>
+              <tr><td>白毫银针</td><td>白茶最高等级，全部由饱满芽头制成，外形如针，满披白毫</td></tr>
+              <tr><td>白牡丹</td><td>一芽一叶或一芽二叶制成，花香清雅，性价比高，白茶市场主流</td></tr>
+              <tr><td>寿眉</td><td>以叶片为主的的白茶，产量最大，老寿眉陈化后枣香突出</td></tr>
+              <tr><td>贡眉</td><td>传统上指用菜茶品种制成的白茶，现多与寿眉混称</td></tr>
+              <tr><td>新白茶</td><td>当年或存放不满1年的白茶，呈现最接近自然的鲜甜口感</td></tr>
+              <tr><td>萎凋</td><td>白茶核心工序，让鲜叶在特定环境（室内或日光）下缓慢散失水分，激发酶活性</td></tr>
+              <tr><td>干燥</td><td>白茶第二道工序，文火慢焙或日晒，固定品质并去除多余水分</td></tr>
+              <tr><td>不炒不揉</td><td>白茶工艺特点，最大程度保留茶叶自然状态和营养成分</td></tr>
+              <tr><td>散茶</td><td>未经压制的原始形态，香气更清透，冲泡方便</td></tr>
+              <tr><td>饼茶</td><td>经蒸压成饼状，便于存储和运输，有利于后期转化出枣香</td></tr>
+              <tr><td>白茶饼</td><td>散茶蒸压后存放，更易转化出浓郁枣香，老白茶饼价格高于散茶</td></tr>
+              <tr><td>白毫</td><td>茶芽表面密布的银白色细茸毛，是白茶外形特征，富含氨基酸</td></tr>
+              <tr><td>毫香</td><td>白茶嫩芽特有的香气，清雅带甜，类似嫩玉米须的气息</td></tr>
+              <tr><td>显毫</td><td>茶叶表面白毫显露明显，是品质好的标志</td></tr>
+              <tr><td>芽头肥壮</td><td>茶芽饱满肥大，内含物质丰富，品质上乘</td></tr>
+              <tr><td>花香</td><td>白牡丹等带有的清新花香，由品种和工艺决定</td></tr>
+              <tr><td>枣香</td><td>老白茶（多为老寿眉饼）陈化后产生的类似红枣的甜香，是高品质标志</td></tr>
+              <tr><td>药香</td><td>老白茶陈化后产生的类似中药材的香气，代表转化良好</td></tr>
+              <tr><td>荷叶香</td><td>部分老白茶会转化出类似荷叶的清香</td></tr>
+              <tr><td>毫香蜜韵</td><td>白毫银针特有的口感，毫香与甘甜滋味的完美结合</td></tr>
+              <tr><td>鲜爽</td><td>新白茶特有的口感，鲜活、清爽、回甘快</td></tr>
+              <tr><td>醇厚</td><td>老白茶的口感特点，经过岁月转化，汤感饱满</td></tr>
+              <tr><td>一年茶</td><td>当年新白茶，鲜爽清甜，以鲜香为主</td></tr>
+              <tr><td>三年药</td><td>存放3年以上的白茶，药香渐显，功效增强</td></tr>
+              <tr><td>七年宝</td><td>存放7年以上的老白茶，枣香药香显著，价值较高</td></tr>
+              <tr><td>老白茶</td><td>存放3年以上的白茶，茶性由凉转温，适合更多人群</td></tr>
+              <tr><td>年份真实</td><td>白茶定价核心，务必确保年份标注真实可靠</td></tr>
+              <tr><td>耐泡度</td><td>优质白茶可冲泡8-10次以上仍有余味</td></tr>
+              <tr><td>汤色</td><td>新白茶汤色浅黄透亮，老白茶渐转为橙黄、琥珀、棕红色</td></tr>
+              <tr><td>回甘</td><td>白茶饮后口腔产生的持久甜润感</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 红茶 -->
+    <div class="section" id="section-hongcha">
+      <div class="section-title">🌹 红茶</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>红茶是<strong>全发酵茶</strong>，以红汤、红叶、甜香著称，是全球销量最大的茶类之一。中国形成了<strong>滇红、祁红、正山小种</strong>三大顶级红茶体系。</p>
+        <p style="margin-top:8px">特点：茶性温和，适饮人群广；适合清饮或调饮（加奶、加糖）</p>
+      </div>
+      <div class="card">
+        <div class="card-title">工艺流程</div>
+        <div class="process-flow">
+          <span class="process-step">鲜叶采摘</span><span class="process-arrow">→</span>
+          <span class="process-step">萎凋</span><span class="process-arrow">→</span>
+          <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+          <span class="process-step">发酵（3-5小时）</span><span class="process-arrow">→</span>
+          <span class="process-step">干燥</span><span class="process-arrow">→</span>
+          <span class="process-step">精制包装</span>
+        </div>
+        <p style="margin-top:10px; color: var(--tea-gray)">核心：发酵（氧化）——茶叶由绿变红，形成红茶甜香和红汤</p>
+      </div>
+      <div class="card">
+        <div class="card-title">品饮口感方向</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>类型</th><th>香气</th><th>滋味</th><th>体感</th></tr></thead>
+            <tbody>
+              <tr><td>金骏眉</td><td>蜜香、花香、果香复合</td><td>鲜甜醇厚，无苦涩</td><td>清爽，提神</td></tr>
+              <tr><td>正山小种</td><td>松烟香（传统）/ 花果香</td><td>醇厚甘甜，有特殊松烟味</td><td>暖胃，温和</td></tr>
+              <tr><td>滇红</td><td>蜜香、花香浓郁</td><td>醇厚甘甜，汤色红亮</td><td>暖和，饱满</td></tr>
+              <tr><td>祁红</td><td>祁门香（玫瑰/蜜糖香）</td><td>鲜醇甘甜，细腻</td><td>清甜，舒适</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">高频词汇表</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+            <tbody>
+              <tr><td>全发酵</td><td>红茶核心工艺特征，茶叶中茶多酚经完全氧化发酵，转化为茶红素</td></tr>
+              <tr><td>工夫红茶</td><td>制作工艺精细、耗时长的红茶，条索紧结美观，品质较高</td></tr>
+              <tr><td>红碎茶</td><td>将红茶切成细碎颗粒，主要用于出口和调饮茶</td></tr>
+              <tr><td>金骏眉</td><td>正山小种基础上研发的顶级红茶，选用武夷山保护区内单芽制成</td></tr>
+              <tr><td>正山小种</td><td>世界红茶鼻祖，产自福建武夷山桐木关，传统工艺有松烟香</td></tr>
+              <tr><td>外山小种</td><td>桐木关以外的模仿正山工艺的红茶，品质和价格均低于正山</td></tr>
+              <tr><td>桐木关</td><td>福建武夷山国家级自然保护区，金骏眉和正山小种核心产区</td></tr>
+              <tr><td>祁门红茶</td><td>产自安徽祁门，世界三大高香红茶之一，以"祁门香"著称</td></tr>
+              <tr><td>滇红</td><td>产自云南的红茶，以凤庆、临沧为核心产区，芽毫显露，蜜香浓郁</td></tr>
+              <tr><td>英德红茶</td><td>产自广东英德市，浓强鲜爽，适合调饮</td></tr>
+              <tr><td>祁门香</td><td>祁红特有的复合香气，类似玫瑰、蜜糖、兰花混合，国际公认</td></tr>
+              <tr><td>松烟香</td><td>传统正山小种用松木熏制产生的烟熏香气，是其标志性特征</td></tr>
+              <tr><td>桂圆香</td><td>优质红茶常有的香气，类似干桂圆的甜香</td></tr>
+              <tr><td>蜜香</td><td>红茶常见的花蜜般甜香，以金骏眉、滇红金芽最为突出</td></tr>
+              <tr><td>花香</td><td>部分红茶（尤其是高海拔春茶）带有的清新花香</td></tr>
+              <tr><td>薯香</td><td>优质滇红常见的香气，类似烤红薯的甜香</td></tr>
+              <tr><td>金毫/金芽</td><td>茶芽上密布金黄色茸毛，是高品质红茶外形特征</td></tr>
+              <tr><td>金圈</td><td>茶汤在杯壁边缘形成的金色光圈，代表内含物质丰富</td></tr>
+              <tr><td>乌润</td><td>优质红茶干茶色泽，油润乌黑有光泽</td></tr>
+              <tr><td>碎末</td><td>红茶叶片切碎后的碎末，影响外观，不宜过多</td></tr>
+              <tr><td>冷后浑</td><td>热红茶冷却后产生乳状浑浊，由茶黄素与咖啡因结合形成，是好茶标志</td></tr>
+              <tr><td>浓强鲜</td><td>优质红茶口感特点——滋味浓郁、口感强劲、鲜爽度高</td></tr>
+              <tr><td>甜醇</td><td>红茶基本口感，甜润醇和，不苦涩</td></tr>
+              <tr><td>回甘</td><td>饮茶后口腔产生的持久甜润感</td></tr>
+              <tr><td>顺滑</td><td>茶汤入口顺畅柔和，无粗糙刺激感</td></tr>
+              <tr><td>金骏眉甜</td><td>金骏眉特有的鲜甜口感，入口即甜，几乎无苦涩</td></tr>
+              <tr><td>萎凋</td><td>红茶工艺第一步，让鲜叶散失部分水分至柔软</td></tr>
+              <tr><td>揉捻</td><td>将萎凋叶揉搓成条索，挤出茶汁促进发酵</td></tr>
+              <tr><td>发酵</td><td>红茶核心工序，在适宜温湿度下让茶叶充分氧化变色</td></tr>
+              <tr><td>干燥</td><td>终止发酵并固定品质，高温快速干燥</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 乌龙茶 -->
+    <div class="section" id="section-wulong">
+      <div class="section-title">🌸 乌龙茶</div>
+      <div class="card">
+        <div class="card-title">品类简介</div>
+        <p>乌龙茶（青茶）是介于绿茶和红茶之间的<strong>半发酵茶</strong>，兼具绿茶清香与红茶甘醇，"千香万味"。本手册重点介绍三大主流品类：<strong>凤凰单丛、武夷岩茶、铁观音</strong>。</p>
+      </div>
+      <!-- 子品类切换 -->
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="showSubTab('dandong', this)">凤凰单丛</div>
+        <div class="sub-tab" onclick="showSubTab('yancha', this)">武夷岩茶</div>
+        <div class="sub-tab" onclick="showSubTab('tieguanyin', this)">铁观音</div>
+      </div>
+
+      <!-- 单丛 -->
+      <div class="sub-section" id="sub-dandong">
+        <div class="card">
+          <div class="card-title">凤凰单丛 · 简介</div>
+          <p>产自广东潮州凤凰镇，因<strong>单株采摘、单株制作</strong>而得名。香型超过80种，有"一树一香"之说，以乌岽山（海拔1000-1500m）出产的最优。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">凤凰单丛 · 工艺流程</div>
+          <div class="process-flow">
+            <span class="process-step">采摘（下午3点后）</span><span class="process-arrow">→</span>
+            <span class="process-step">晒青</span><span class="process-arrow">→</span>
+            <span class="process-step">凉青</span><span class="process-arrow">→</span>
+            <span class="process-step">碰青（多次）</span><span class="process-arrow">→</span>
+            <span class="process-step">杀青</span><span class="process-arrow">→</span>
+            <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+            <span class="process-step">炭火慢焙</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">凤凰单丛 · 口感方向</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>香型</th><th>香气</th><th>滋味</th></tr></thead>
+              <tbody>
+                <tr><td>鸭屎香</td><td>玉兰花香、蜜香</td><td>鲜爽醇厚，回甘迅速</td></tr>
+                <tr><td>芝兰香</td><td>清幽芝兰花香</td><td>清甜细腻</td></tr>
+                <tr><td>蜜兰香</td><td>蜂蜜兰花香</td><td>醇厚甘甜</td></tr>
+                <tr><td>老丛</td><td>木质香、苔藓香、山野气</td><td>醇厚有深度，丛味浓</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">凤凰单丛 · 高频词汇</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+              <tbody>
+                <tr><td>单丛</td><td>单株采摘、单株制作的乌龙茶，每株茶树香型各异，故名"单丛"</td></tr>
+                <tr><td>凤凰单丛</td><td>产自广东潮州凤凰镇，以单株采制为特色的乌龙茶</td></tr>
+                <tr><td>香型</td><td>凤凰单丛以香气命名分类，常见香型超过80种</td></tr>
+                <tr><td>十大香型</td><td>蜜兰香、黄枝香、芝兰香、桂花香、玉兰香、肉桂香、夜来香、茉莉香、姜母香、杏仁香</td></tr>
+                <tr><td>鸭屎香</td><td>凤凰单丛最知名香型，实为银花香（玉兰花香），名字来自当地俗称，回甘迅猛</td></tr>
+                <tr><td>蜜兰香</td><td>十大香型之一，种植面积最大，蜂蜜甜醇+兰花香气，浓蜜幽兰</td></tr>
+                <tr><td>芝兰香</td><td>清幽芝兰花香，口感清甜细腻，优雅型</td></tr>
+                <tr><td>桂花香</td><td>类似桂花的清甜香气，高雅细腻</td></tr>
+                <tr><td>黄枝香</td><td>类似黄枝花（栀子花）的浓郁香气</td></tr>
+                <tr><td>夜来香</td><td>具有夜来香花香的独特香型</td></tr>
+                <tr><td>老丛</td><td>树龄50年以上茶树所制单丛，丛味（木质香、苔藓味）突出</td></tr>
+                <tr><td>古树单丛</td><td>树龄100年以上，数量稀少，滋味醇厚深邃</td></tr>
+                <tr><td>丛味/丛韵</td><td>老丛特有的木质、苔藓、山野气息，是岁月沉淀的味道</td></tr>
+                <tr><td>茶农口中的「茶」</td><td>指茶树本身的品种特征，不经过多的工艺修饰</td></tr>
+                <tr><td>碰青</td><td>凤凰单丛特有的做青方式，手工碰撞茶叶使边缘摩擦破损，促进发酵</td></tr>
+                <tr><td>浪菜</td><td>单丛制作中类似"摇青"的工序，通过翻滚使茶叶发酵均匀</td></tr>
+                <tr><td>炭焙</td><td>用荔枝炭、龙眼炭等木炭低温慢烘，形成独特炭香，提升香气稳定性</td></tr>
+                <tr><td>春茶</td><td>春季采摘的单丛，品质最优，香气馥郁</td></tr>
+                <tr><td>雪片</td><td>冬季采摘的单丛，香气高扬，但滋味稍薄</td></tr>
+                <tr><td>乌岽山</td><td>凤凰镇最高峰（海拔1397米），最优质单丛产地，产量有限</td></tr>
+                <tr><td>凤凰山</td><td>凤凰单丛核心产区，包括乌岽山、凤溪山等</td></tr>
+                <tr><td>大庵</td><td>凤凰山核心村寨，盛产优质单丛</td></tr>
+                <tr><td>绿叶红镶边</td><td>乌龙茶叶片特征，叶片边缘红色、中心绿色，红绿相间</td></tr>
+                <tr><td>黄褐油润</td><td>优质单丛干茶色泽，油润有光泽</td></tr>
+                <tr><td>山韵</td><td>优质单丛特有的韵味，来自特定山场的矿物质和气候</td></tr>
+                <tr><td>耐泡</td><td>优质单丛可冲泡10泡以上仍有余香</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 岩茶 -->
+      <div class="sub-section" id="sub-yancha" style="display:none">
+        <div class="card">
+          <div class="card-title">武夷岩茶 · 简介</div>
+          <p>产自福建武夷山，因生长在岩石中而得名，具有独特的"<strong>岩骨花香</strong>"（岩韵）。以<strong>大红袍、肉桂、水仙</strong>为代表。核心产区为<strong>三坑两涧</strong>等正岩区。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">武夷岩茶 · 工艺流程</div>
+          <div class="process-flow">
+            <span class="process-step">采摘（开面采）</span><span class="process-arrow">→</span>
+            <span class="process-step">萎凋</span><span class="process-arrow">→</span>
+            <span class="process-step">做青（摇青+静置）</span><span class="process-arrow">→</span>
+            <span class="process-step">炒青</span><span class="process-arrow">→</span>
+            <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+            <span class="process-step">多次焙火</span><span class="process-arrow">→</span>
+            <span class="process-step">炖火</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">武夷岩茶 · 口感方向</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>品种</th><th>香气</th><th>滋味</th></tr></thead>
+              <tbody>
+                <tr><td>肉桂</td><td>桂皮香、辛辣香</td><td>醇厚霸气，辛辣感突出</td></tr>
+                <tr><td>水仙</td><td>兰花香、花香细腻</td><td>醇厚顺滑，水感好</td></tr>
+                <tr><td>大红袍</td><td>花香果香复合</td><td>醇厚甘爽，岩韵明显</td></tr>
+                <tr><td>铁罗汉</td><td>药香、木香</td><td>浓郁醇和，古韵感强</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">武夷岩茶 · 高频词汇</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+              <tbody>
+                <tr><td>岩韵</td><td>武夷岩茶核心品质特征，"岩骨花香"——茶汤醇厚带矿物质风味，饮后齿颊留香</td></tr>
+                <tr><td>岩骨</td><td>岩韵的体现，茶叶吸收武夷山岩石土壤矿物质带来的独特口感</td></tr>
+                <tr><td>花香</td><td>武夷岩茶的香气特征，由工艺赋予，呈花果香</td></tr>
+                <tr><td>岩骨花香</td><td>武夷岩茶品质核心，岩韵+香气的综合体验</td></tr>
+                <tr><td>正岩</td><td>武夷山风景区内核心生态区，品质最高，岩韵显著</td></tr>
+                <tr><td>半岩</td><td>风景区边缘及周边山场，品质和价格低于正岩</td></tr>
+                <tr><td>洲茶</td><td>河岸沙洲地所产茶，岩韵弱</td></tr>
+                <tr><td>外山</td><td>武夷山行政区划外的周边产区</td></tr>
+                <tr><td>三坑两涧</td><td>牛栏坑、慧苑坑、倒水坑 + 流香涧、悟源涧，正岩精华地带</td></tr>
+                <tr><td>慧苑坑</td><td>三坑之一，以老丛水仙著名</td></tr>
+                <tr><td>牛栏坑</td><td>三坑之一，以肉桂闻名，"牛肉"产地</td></tr>
+                <tr><td>流香涧</td><td>两涧之一，香气较好</td></tr>
+                <tr><td>悟源涧</td><td>两涧之一，茶品香气清正</td></tr>
+                <tr><td>马头岩</td><td>正岩产区，以肉桂闻名，"马肉"</td></tr>
+                <tr><td>水帘洞</td><td>正岩产区，品种丰富</td></tr>
+                <tr><td>山场味</td><td>同一品种因种植小环境差异形成的独特地域风味</td></tr>
+                <tr><td>大红袍</td><td>武夷岩茶四大名枞之首，素有"茶中之王"美誉，母树已禁采</td></tr>
+                <tr><td>肉桂</td><td>武夷山主力品种，桂皮香辛辣霸气，是市场最畅销岩茶</td></tr>
+                <tr><td>水仙</td><td>武夷岩茶另一主力品种，兰花香清雅，滋味醇厚，水感好</td></tr>
+                <tr><td>武夷奇种</td><td>用当地菜茶品种制成的岩茶，品种特征不突出但滋味丰富</td></tr>
+                <tr><td>牛肉</td><td>牛栏坑肉桂的简称，极品正岩肉桂，市场价格高</td></tr>
+                <tr><td>马肉</td><td>马头岩肉桂的简称，性价比高于牛肉</td></tr>
+                <tr><td>慧肉</td><td>慧苑坑肉桂的简称</td></tr>
+                <tr><td>正岩水仙</td><td>正岩产区产的水仙，品质上乘</td></tr>
+                <tr><td>老丛水仙</td><td>树龄超过60年的水仙，丛味突出，滋味醇厚</td></tr>
+                <tr><td>焙火</td><td>岩茶重要工序，用炭火烘焙，分轻火、中火、足火</td></tr>
+                <tr><td>火功</td><td>岩茶焙火程度，轻火香气扬，重火汤感醇厚耐存放</td></tr>
+                <tr><td>轻火</td><td>焙火温度较低，香气清高（多为花香），汤色浅，韵味稍薄</td></tr>
+                <tr><td>中火</td><td>市场主流，香气馥郁（花果香+焦糖香），汤色橙黄，滋味醇厚</td></tr>
+                <tr><td>足火</td><td>焙火较重，香气沉稳（果香蜜甜香），汤色橙红，岩韵显，耐存放</td></tr>
+                <tr><td>高火/病火</td><td>焙火过度，火香突出但茶叶活性受损，不推荐</td></tr>
+                <tr><td>炖火</td><td>低温（约80-90℃）长时间慢焙，让茶叶慢慢"吃透火"，提升醇厚度</td></tr>
+                <tr><td>走水</td><td>做青阶段茶叶水分从叶脉向叶面转移散发，发酵均匀</td></tr>
+                <tr><td>做青</td><td>岩茶核心工序，摇青与静置交替，控制发酵程度</td></tr>
+                <tr><td>蜻蜓头</td><td>揉捻后条索紧结，前端钝圆似蜻蜓头，叶缘背卷</td></tr>
+                <tr><td>蛤蟆背</td><td>叶底背面凹凸小泡点，状如蛤蟆皮，是焙火到位的表现</td></tr>
+                <tr><td>返青</td><td>岩茶存放受潮后青草气重现，需重新焙火</td></tr>
+                <tr><td>水厚/水薄</td><td>水厚=内含物质丰富、汤感饱满；水薄=寡淡单薄</td></tr>
+                <tr><td>水细/水粗</td><td>水细=顺滑细腻如丝绸；水粗=入口粗糙有颗粒感</td></tr>
+                <tr><td>辛辣感</td><td>优质肉桂品种特有的微刺激感，类似桂皮的辛锐</td></tr>
+                <tr><td>收敛性</td><td>涩感能否快速化开生津回甘，好茶收敛性好</td></tr>
+                <tr><td>喉韵</td><td>茶汤咽下后喉咙深处的甘爽滋润感，是底蕴深的标志</td></tr>
+                <tr><td>绿叶红镶边</td><td>做青发酵适度的标志，叶缘红褐色、中心黄绿色</td></tr>
+                <tr><td>落水香</td><td>香气融入茶汤，不仅闻得到，更随汤蔓延口腔</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 铁观音 -->
+      <div class="sub-section" id="sub-tieguanyin" style="display:none">
+        <div class="card">
+          <div class="card-title">铁观音 · 简介</div>
+          <p>产自福建安溪县，以"<strong>音韵</strong>"著称。主要分为<strong>清香型</strong>（轻发酵轻焙火，花香清扬）、<strong>浓香型</strong>（传统焙火，香气厚重）、<strong>陈香型</strong>（存放陈化）三类。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">铁观音 · 工艺流程</div>
+          <div class="process-flow">
+            <span class="process-step">采摘</span><span class="process-arrow">→</span>
+            <span class="process-step">萎凋</span><span class="process-arrow">→</span>
+            <span class="process-step">做青（摇青+静置）</span><span class="process-arrow">→</span>
+            <span class="process-step">炒青</span><span class="process-arrow">→</span>
+            <span class="process-step">揉捻</span><span class="process-arrow">→</span>
+            <span class="process-step">包揉（颗粒状）</span><span class="process-arrow">→</span>
+            <span class="process-step">烘焙</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">铁观音 · 口感方向</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>类型</th><th>香气</th><th>滋味</th></tr></thead>
+              <tbody>
+                <tr><td>清香型</td><td>花香浓郁，兰花香、清雅</td><td>清甜鲜爽，略带苦涩</td></tr>
+                <tr><td>浓香型</td><td>花香厚重，焙火香</td><td>醇厚甘甜，耐泡</td></tr>
+                <tr><td>陈香型</td><td>陈香、药香</td><td>醇厚顺滑，无涩感</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">铁观音 · 高频词汇</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>词汇</th><th>释义</th></tr></thead>
+              <tbody>
+                <tr><td>音韵</td><td>铁观音独有的品质特征，兰花香与甘甜口感的综合体验，是评判标准</td></tr>
+                <tr><td>观音韵</td><td>铁观音特有的韵味，类似岩茶的"岩韵"，代表品质上乘</td></tr>
+                <tr><td>七泡有余香</td><td>优质铁观音可冲泡7次以上仍有余香，是品质好的标志</td></tr>
+                <tr><td>清香型</td><td>轻发酵、轻焙火工艺，花香清扬高锐，保质期较短（约1年）</td></tr>
+                <tr><td>浓香型</td><td>传统焙火风格，香气厚重带焙火香，更耐储存</td></tr>
+                <tr><td>陈香型</td><td>存放多年后陈化转变，类似老茶风格，醇厚顺滑</td></tr>
+                <tr><td>鲜香型</td><td>强调新鲜花香的铁观音，发酵程度轻</td></tr>
+                <tr><td>包揉</td><td>铁观音特有工序，将茶叶反复包揉成紧实颗粒状，形成独特外形</td></tr>
+                <tr><td>颗粒状</td><td>铁观音干茶外形，蜻蜓头般圆结紧实，区别于条索形乌龙茶</td></tr>
+                <tr><td>拖酸</td><td>一种铁观音制作工艺，酸香明显，部分茶客喜爱</td></tr>
+                <tr><td>消青</td><td>铁观音制作工艺，香气清高，滋味鲜爽</td></tr>
+                <tr><td>炒青</td><td>终止茶叶发酵的工序，高温快速加热</td></tr>
+                <tr><td>正炒</td><td>传统铁观音制作工艺，品质稳定，口感醇正</td></tr>
+                <tr><td>安溪铁观音</td><td>福建安溪县产，国家地理标志产品，品质标杆</td></tr>
+                <tr><td>感德</td><td>安溪最重要产区之一，主产清香型铁观音</td></tr>
+                <tr><td>祥华</td><td>安溪核心产区，茶品香气清正，滋味醇厚</td></tr>
+                <tr><td>西坪</td><td>铁观音传统发源地，浓香型主产区</td></tr>
+                <tr><td>华安</td><td>福建华安县产铁观音，品质较好</td></tr>
+                <tr><td>蜻蜓头</td><td>铁观音干茶外形，颗粒圆结，梗部稍长，形似蜻蜓头</td></tr>
+                <tr><td>青蛙腿</td><td>颗粒茶揉捻时叶背外卷，形似青蛙腿，是传统工艺标志</td></tr>
+                <tr><td>砂绿润</td><td>干茶色泽墨绿带砂质感，油润有光</td></tr>
+                <tr><td>兰花香</td><td>铁观音标志性香气，清雅幽香如兰</td></tr>
+                <tr><td>滋味醇厚</td><td>铁观音口感特点，好的铁观音入口顺滑、回甘快</td></tr>
+                <tr><td>叶底肥厚</td><td>冲泡后叶底肥厚柔软，表明原料嫩度好</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showSection(id, el) {
+  // 隐藏所有
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+  // 显示目标
+  document.getElementById('section-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  // 更新标题
+  const titles = {
+    home: '首页总览',
+    puerh: '普洱茶',
+    liubao: '六堡茶',
+    chenpi: '陈皮',
+    baicha: '白茶',
+    hongcha: '红茶',
+    wulong: '乌龙茶'
+  };
+  document.getElementById('page-title').textContent = titles[id] || id;
+  window.scrollTo(0, 0);
+}
+
+function showSubTab(id, el) {
+  document.querySelectorAll('.sub-section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sub-' + id).style.display = 'block';
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
