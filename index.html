@@ -327,8 +327,18 @@
     .hero h2 { font-size: 1.3rem; }
     .card { padding: 16px; }
     /* 表格允许横向滚动 */
-    .table-wrap { font-size: 0.8rem; }
-    table { font-size: 0.8rem; }
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: 0.8rem;
+    }
+    table {
+      font-size: 0.8rem;
+      white-space: nowrap;  /* 禁止换行，强制横向滚动 */
+    }
+    table tbody td {
+      white-space: nowrap;  /* td内容不换行 */
+    }
     thead th, tbody td { padding: 8px 10px; }
     /* 子标签 */
     .sub-tabs { gap: 6px; }
